@@ -39,3 +39,7 @@ luac.out
 *.x86_64
 *.hex
 
+
+# Credentials
+database_config.lua
+

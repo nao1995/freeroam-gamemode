@@ -1,0 +1,15 @@
+return 
+{
+	-- MySQL server, either in IP format or in resolvable hostname format.
+	hostname = "127.0.0.1",
+
+	-- Port number the MySQL service runs on the server, must be a string.
+	port     = "3306",
+
+	-- Login credentials for the MySQL service. All database operations are on "nvmp",
+	-- do not rename the database to anything else (TODO).
+	user     = "mysql_username",
+	pass     = "mysql_password",
+
+	db       = "nvmp"
+};
