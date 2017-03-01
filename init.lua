@@ -5,6 +5,13 @@ SERVER:SetSetting("cl_disablesaving",  "1"); -- No saving in free-roam.
 SERVER:SetSetting("cl_disablequests",  "1");
 SERVER:SetSetting("sv_enablefactions", "1");
 
+local core = require("util/core");
+
+-- Game commands
+require("util/commands/player");
+require("util/commands/gamemaster");
+require("util/commands/developer");
+
 -- Freeroam modules
 SERVER.Bases     = nil;
 SERVER.Database  = nil;
@@ -31,14 +38,14 @@ function SERVER:Init()
 	SERVER.Inventory:Load( SERVER.Database );
 end
 
-function SERVER:GetStartingBackpack()
-	local result = {};
-	result[ NVItemDB:GetItem( 0x0001cbdc ) ] = { equipped = true, count = 1   };  -- Vault-tec uniform.
-	result[ NVItemDB:GetItem( 0x000e3778 ) ] = { equipped = true, count = 1   };  -- 9mm pistol
-	result[ NVItemDB:GetItem( 0x0008ed03 ) ] = { equipped = true, count = 100 };  -- Standard 9mm round
-	result[ NVItemDB:GetItem( 0x00004334 ) ] = { equipped = true, count = 1   };  -- Knife
-	return result;
-end
+--function SERVER:GetStartingBackpack()
+--	local result = {};
+--	result[ NVItemDB:GetItem( 0x0001cbdc ) ] = { equipped = true, count = 1   };  -- Vault-tec uniform.
+--	result[ NVItemDB:GetItem( 0x000e3778 ) ] = { equipped = true, count = 1   };  -- 9mm pistol
+--	result[ NVItemDB:GetItem( 0x0008ed03 ) ] = { equipped = true, count = 100 };  -- Standard 9mm round
+--	result[ NVItemDB:GetItem( 0x00004334 ) ] = { equipped = true, count = 1   };  -- Knife
+--	return result;
+--end
 
 function SERVER:OnPlayerJoin(player)
 	SERVER.Bases:SendBaseList( player );
@@ -89,18 +96,15 @@ function SERVER:OnPlayerRequestSpawn(player)
 
 	-- Load temporary backpack they used on the server.
 		-- if this is their first load, or they were dead (bug, TODO), load the starting backpack.
-	local server_backpack = nil; -- TODO, load from DB;
-	if (server_backpack == nil) then
-		server_backpack = self:GetStartingBackpack();
-	end
+	SERVER.Inventory:LoadUserKit( player );
 
-	for k, v in pairs( server_backpack ) do
-		player:GiveItem( k, v["count"] ); -- , v["health"] -- TODO
-
-		if (v["equipped"]) then
-			player:EquipItem( k );
-		end
-	end
+	--for k, v in pairs( server_backpack ) do
+	--	player:GiveItem( k, v["count"] ); -- , v["health"] -- TODO
+	--
+	--	if (v["equipped"]) then
+	--		player:EquipItem( k );
+	--	end
+	--end
 
 	self:SendPlayerToSpawn( player );
 end

@@ -4,8 +4,7 @@ local Base =
 	_database = nil
 };
 
-require("util/core");
-
+local core = require("util/core");
 local Base = require("util/object");
 Base._data     = {};
 Base._database = {};
@@ -51,7 +50,7 @@ function Base:UpdateNodes(hard)
 
 	local node_population = {};
 
-	local w, x, y, z = self:GetWorldspaceCoords();
+	local w, x, y, z, opt_cell = self:GetWorldspaceCoords();
 	z = z + 150.0;
 
 	local faction = SERVER:GetFactionByID(self:GetFactionOwner());
@@ -73,7 +72,11 @@ function Base:UpdateNodes(hard)
 	nametag.type = "zone"; -- Signify this node as a base zone point.
 	nametag.label = self:GetDisplayName();
 	nametag.origin_tag = self:GetDisplayName() .. " owned by " .. faction.name;
-	nametag.worldspace, nametag.x, nametag.y, nametag.z = w, x, y, z;
+	nametag.worldspace = w;
+	nametag.x = x;
+	nametag.y = y;
+	nametag.z = z;
+	nametag.cell = opt_cell;
 	nametag.radius = self:GetWorldspaceRadius();
 	nametag.offset = 0;
 
@@ -191,14 +194,18 @@ end
 --   just zero as first parameter to just set x,y,z.
 -----------------------------------------------------
 function Base:GetWorldspaceCoords()
-	return self._data.worldspace_zone, self._data.worldspace_x, self._data.worldspace_y, self._data.worldspace_z;
+	return self._data.worldspace_zone, self._data.worldspace_x, self._data.worldspace_y, self._data.worldspace_z, self._data.worldspace_cell;
 end
-function Base:SetWorldspaceCoords(zone, x, y, z)
+function Base:SetWorldspaceCoords(zone, x, y, z, opt_cell)
 	self:_Set("worldspace_zone", string.format("%d", zone));
 
 	self:_Set("worldspace_x", x);
 	self:_Set("worldspace_y", y);
 	self:_Set("worldspace_z", z);
+
+	if opt_cell ~= nil then
+		self:_Set("worldspace_cell", opt_cell);
+	end
 end
 
 -----------------------------------------------------

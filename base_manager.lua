@@ -4,8 +4,8 @@ local base_manager =
 	_bases    = {},
 };
 
+local core = require("util/core");
 local FactionBase = require("gamemodes/freeroam/faction_base");
-require("util/core");
 
 function base_manager:GetBaseList()
 	self:Dump();

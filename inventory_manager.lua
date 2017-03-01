@@ -1,11 +1,67 @@
+local core = require("util/core");
 
 local inventory_manager = {};
 inventory_manager._database = nil;
-
-require("util/core");
+inventory_manager._kit_cache = {};
 
 function inventory_manager:Load(database)
 	self._database = database;
+end
+
+function inventory_manager:LoadUserKit(player, forced_faction_id)
+	local faction_id = player:GetDataNumber("FactionID");
+
+	if (forced_faction_id ~= nil) then
+		faction_id = forced_faction_id;
+	end
+
+	local kit_data = nil;
+	local current_time = os.time();
+
+	if (self._kit_cache[ faction_id ] ~= nil) then
+		kit_data = self._kit_cache;
+		
+		-- Expire kit cache after 5 minutes
+		if ( (current_time - kit_data.time) < (60 * 5) ) then
+			kit_data = nil;
+		end
+
+		print("Getting kit from cache...");
+	end
+
+	if (kit_data == nil) then
+		local q = string.format("SELECT * FROM " .. SERVER.DBInfo.db .. ".game_kits WHERE faction_owner = %d", faction_id);
+		local kit_items = self._database:Query(q, true);
+
+		if (kit_items == nil) then
+			warn( player:GetName() .. "'s faction has no kit data.");
+
+			if (forced_faction_id == 0) then
+				warn( "Default kit data not found." );
+				return;
+			end
+
+			return self:LoadUserKit(player, 0)
+		end
+
+		kit_data = { items = kit_items, time = os.time() };
+		self._kit_cache[ faction_id ] = kit_data;
+	end
+	
+	for i,v in pairs(kit_data.items) do 
+		local item = NVItemDB:GetItem( v.form_id );
+
+		if (item == nil) then
+			warn("Databse item " .. v.form_id .. " is invalid.");
+		else
+			player:GiveItem( item, v.count, 100.0 );
+
+			if (v.equipped == 1) then
+				player:EquipItem( item );
+			end
+		end
+	end
+
 end
 
 function inventory_manager:LoadUserInventory(player)
