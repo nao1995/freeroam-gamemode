@@ -1,0 +1,6 @@
+
+*Artillery at Nellis disabled. 
+
+*Changed script for Gomorrah entrance. It should no longer lock players. 
+
+Sha1: fffd0001fd9df55af883d35cae37a7dc5a679c64
