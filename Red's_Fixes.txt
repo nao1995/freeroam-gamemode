@@ -1,0 +1,3 @@
+This esp disables the artillery at Nellis. I may update this with more fixes if I need to.
+
+Sha1: fffd0001fd9df55af883d35cae37a7dc5a679c64
