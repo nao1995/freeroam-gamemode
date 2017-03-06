@@ -3,4 +3,6 @@
 
 *Changed script for Gomorrah entrance. It should no longer lock players. 
 
+*E-DE removed and home marker disabled. Some players were fixing E-DE only to be locked in place.
+
 Sha1: fffd0001fd9df55af883d35cae37a7dc5a679c64
